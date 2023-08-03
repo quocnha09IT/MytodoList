@@ -1,0 +1,33 @@
+version: '3'
+services:
+  # Dịch vụ PostgreSQL
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgress
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: mydb
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Dịch vụ ứng dụng Node.js
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run start
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgres://your_postgres_username:your_postgres_password@db:5432/your_database_name
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    links:
+      - db
+
+volumes:
+  postgres_data:
